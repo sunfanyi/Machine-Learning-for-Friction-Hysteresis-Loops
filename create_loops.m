@@ -1,40 +1,62 @@
-close all; clear variables;
+function [numerical_loops] = create_loops(f, N_cycles, cycle_points, ...
+            m, random_value_generator, training_cycles)
+%CREATE_LOOPS generates numerical hysteresis loops for friction parameters.
+%   create_loops(f, N_cycles, cycle_points, m, random_value_generator,
+%   training_cycles) returns the information of m numerical hysteresis
+%   loops each consist of N_cycles of cycles with random friction
+%   parameters, which can be used for further machine learning. f is the
+%   excitation frequency [Hz]. cycle_points is the number of points each
+%   cycle has. training_cycles specifies the cycles to be extracted from
+%   the evolution of the hysteresis loops, e.g., [2:4] will extract the
+%   second to fourth cycles. randon_value_generator is the 
+%   distribution used to generate random values, which can be:  
+%      'gmdistribution'   The values are from a Gaussian mixture
+%                         distribuition. The mean and standard deviation
+%                         for each test parameter are estimated from the
+%                         values used in past experiments. So the
+%                         returned values can be used to obtain
+%                         hysteresis loops that are close to the real
+%                         experimentl condition.
 
-f = 100;                       % excitation frequency [Hz]
-N_cycles = 2;                  % number of cycles to generate
-T = N_cycles/f;                % timelength of input [s]
-cycle_points = 600;
+% set default values
+if ~exist('f', 'var') || isempty(f)
+    f = 100;
+end
+
+if ~exist('N_cycles', 'var') || isempty(N_cycles)
+    N_cycles = 2;
+end
+
+if ~exist('cycle_points', 'var') || isempty(cycle_points)
+    cycle_points = 600;
+end
+
+if ~exist('m', 'var') || isempty(m)
+    m = 1000;
+end
+
+if ~exist('random_value_generator', 'var') || isempty(random_value_generator)
+    random_value_generator = 'gmdistribution';
+end
+
+if ~exist('training_cycles', 'var') || isempty(training_cycles)
+    training_cycles = N_cycles;  % last cycle only
+end
+
+T = N_cycles/f;       % timelength of input [s]
 t = linspace(0,T,N_cycles*cycle_points);
 
-m = 16;
-mu = get_random_value('mu',m);     % friction coefficient
-N = get_random_value('N',m);       % normal load [N
-CL = mu .* N;                      % Coulomb friction limit [N]
-kt = get_random_value('kt',m);     % contact stiffness [N/mum]
-X = get_random_value('X',m);       % Displ amplitude [mum]
+[mu, N, kt, X] = get_random_values(m, random_value_generator);
+CL = mu .* N;         % Coulomb friction limit [N]
 
 x = X * sin(2*pi*f*t);             % excitation displ [mum]
 v = diff(x,[],2) ./ diff(t);       % velocity signal
 
 Ffr = Jenkins_element(kt,x,CL);
-
-% plot the loops
-figure
-for i = 1:m
-%     Ffr(i,:) = Jenkins_element(kt(i),x(i,:),CL(i));
-    subplot(4,4,i)
-    plot(x(i,:), Ffr(i,:), 'b.');
-    hold on;
-%     plot(x(i,:), Ffr(i,:), 'b-');
-    yline(CL(i), '--r');
-    yline(-CL(i), '--r');
-    xlim([-max(X) max(X)]);
-    ylim([-max(Ffr(:)) max(Ffr(:))]);
-    xlabel('Relative Displacement [\mu m]');
-    if mod(i,4) == 1
-        ylabel('Friction Force [N]');
-    end
-end
     
-% numerical_loops = table(mu,CL,kt,X,x,Ffr,'VariableNames',{'mu','CL','kt','X','x','Ffr'});
-% save numerical_loops.mat numerical_loops;
+idx = (training_cycles(1)-1)*cycle_points + 1 : training_cycles(end)*cycle_points;
+numerical_loops = table(mu, CL, kt, X, ...
+                    x(:,idx), Ffr(:,idx), ...
+                    'VariableNames',{'mu','CL','kt','X','x','Ffr'});
+
+end
