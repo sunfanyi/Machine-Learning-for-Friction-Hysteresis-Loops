@@ -1,9 +1,6 @@
-function [] = plot_numerical_loops(f, N_cycles, cycle_points, ...
-            random_value_generator, training_cycles)
+function [] = plot_numerical_loops(numerical_loops)
 
-m = 16;
-numerical_loops = create_loops(f, N_cycles, cycle_points, ...
-            m, random_value_generator, training_cycles);
+numerical_loops = numerical_loops(1:16,:);
 x = numerical_loops.x;
 Ffr = numerical_loops.Ffr;
 CL = numerical_loops.CL;
@@ -11,7 +8,7 @@ X = numerical_loops.X;
 
 % plot the loops
 figure
-for i = 1:m
+for i = 1:16
     subplot(4,4,i)
     plot(x(i,:), Ffr(i,:), 'b.');
     hold on;
