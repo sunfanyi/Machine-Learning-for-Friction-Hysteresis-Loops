@@ -1,11 +1,12 @@
+clear variables;
 
 %% generate numerical data
-close all; clear variables;
+close all; 
 
 f = 100;
 N_cycles = 2;
 cycle_points = 600;
-m = 10000;
+m = 1000;
 % random_value_generator = 'gmdistribution';
 random_value_generator = 'uniform';
 training_cycles = N_cycles;
@@ -21,8 +22,14 @@ cd model_1
 %% choose features for training
 % raw x vs. F data
 % X = [numerical_loops.x numerical_loops.Ffr];
+
 % slope between two consecutive points
-X = diff(numerical_loops.Ffr,1,2) ./ diff(numerical_loops.x,1,2);
+% X = diff(numerical_loops.Ffr,1,2) ./ diff(numerical_loops.x,1,2);
+
+% derivative of x and Ffr over time
+dxdt = diff(numerical_loops.x,1,2) ./ diff(numerical_loops.t,1,2);
+dFdt = diff(numerical_loops.Ffr,1,2) ./ diff(numerical_loops.t,1,2);
+X = [dxdt dFdt];
 
 % y = numerical_loops.mu;
 y = numerical_loops.kt;
@@ -60,13 +67,19 @@ ytest = y(0.8*m+1:end,:);
 
 %% SVM
 rng('default')
-SVMmdl = fitrsvm(Xtrain,ytrain,...
+SVMmdl_dxdFdt_opt = fitrsvm(Xtrain,ytrain,...
          'OptimizeHyperparameters','auto',...
          'HyperparameterOptimizationOptions',...
          struct('AcquisitionFunctionName','expected-improvement-plus'))
-save SVMmdl.mat SVMmdl;
+save SVMmdl_dxdFdt_opt.mat SVMmdl_dxdFdt_opt;
 
-% SVMmdl_noopt = fitrsvm(Xtrain,ytrain);
+% SVMmdl = fitrsvm(Xtrain, ytrain, ...
+%             'BoxConstraint', SVMmdl_opt.ModelParameters.BoxConstraint, ...
+%             'Epsilon', SVMmdl_opt.ModelParameters.Epsilon, ...
+%             'KernelScale', SVMmdl_opt.ModelParameters.KernelScale, ...
+%             'Standardize', false)
+
+% SVMmdl_noopt = fitrsvm(Xtrain,ytrain,'Standardize', true);
 % save SVMmdl_noopt.mat SVMmdl_noopt;
 
 %% Guassian SVM
@@ -81,8 +94,8 @@ save SVMmdl.mat SVMmdl;
 % save GaussSVMmdl_noopt.mat GaussSVMmdl_noopt;
 
 %% Evaluate model performance
-% load GaussSVMmdl_noopt;
-y_pred = predict(SVMmdl,Xtest);
+% load SVMmdl;
+y_pred = predict(SVMmdl_dxdFdt_opt,Xtest);
 error = (y_pred-ytest)./ytest;
 
 figure;
@@ -94,7 +107,10 @@ hold on;
 plot(ytest(smp_idx,:),'kx-');
 % plot([1:n; 1:n], [ytest(smp_idx,:) y_pred(smp_idx,:)]','r');
 legend('predicted','actual');
-title(sprintf('Error: %0.2f%%', 100*mean(abs(error))));
-
+[max_error, idx] = max(abs(error));
+title(sprintf('mean error: %0.2f%%, highest error: %0.2f%% at %0.0f%', ...
+            100*mean(abs(error)), 100*max_error, idx));
+figure;
+plot(error,'x');
 
 

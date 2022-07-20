@@ -45,18 +45,19 @@ end
 
 T = N_cycles/f;       % timelength of input [s]
 t = linspace(0,T,N_cycles*cycle_points);
+t = repmat(t, m, 1);  % for now each loop has same time signal
 
 [mu, N, kt, X] = get_random_values(m, random_value_generator);
 CL = mu .* N;         % Coulomb friction limit [N]
 
-x = X * sin(2*pi*f*t);             % excitation displ [mum]
-v = diff(x,[],2) ./ diff(t);       % velocity signal
+x = X .* sin(2*pi*f*t);             % excitation displ [mum]
+v = diff(x,[],2) ./ diff(t,[],2);       % velocity signal
 
 Ffr = Jenkins_element(kt,x,CL);
     
 idx = (training_cycles(1)-1)*cycle_points + 1 : training_cycles(end)*cycle_points;
-numerical_loops = table(mu, CL, kt, X, ...
-                    x(:,idx), Ffr(:,idx), ...
-                    'VariableNames',{'mu','CL','kt','X','x','Ffr'});
+numerical_loops = table(mu, N, CL, kt, X, ...
+                    x(:,idx), Ffr(:,idx), t(:,idx), ...
+                    'VariableNames',{'mu','N','CL','kt','X','x','Ffr','t'});
 
 end

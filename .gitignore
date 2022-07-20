@@ -1,5 +1,6 @@
 *.asv
 *.xlsx
+*.mat
 
 /data/
 

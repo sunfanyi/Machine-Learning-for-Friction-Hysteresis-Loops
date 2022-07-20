@@ -47,7 +47,7 @@ elseif random_value_generator == "uniform"
     mu = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % normal load N [N]
-    interval = [0.1 400];
+    interval = [10 400];
     N = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % contact stiffness kt [N/mum]
