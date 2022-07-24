@@ -3,18 +3,25 @@ clear variables;
 %% generate numerical data
 close all; 
 
-f = 100;
+fex = 100;  % excitation frequency (Hz)
 N_cycles = 2;
 cycle_points = 600;
-m = 10000;
+m = 16;
 % random_value_generator = 'gmdistribution';
 random_value_generator = 'uniform';
 training_cycles = N_cycles;
 
 cd ..
-numerical_loops = create_loops(f, N_cycles, cycle_points, m,...
-    random_value_generator, training_cycles);
-plot_numerical_loops(numerical_loops);
+% cd create_numerical_loops
+% numerical_loops = create_loops(fex, N_cycles, cycle_points, m,...
+%     random_value_generator, training_cycles);
+
+load real_loops.mat;
+
+% loops = numerical_loops;
+loops = real_loops;
+
+plot_loops_individual(loops(1:16,:));
 cd model_1
 
 % save loops_10k.mat numerical_loops;
@@ -24,24 +31,24 @@ cd model_1
 % load loops_10k.mat
 
 % raw x vs. F data
-% X = [numerical_loops.x numerical_loops.Ffr];
+% X = [loops.x loops.Ffr];
 
 % slope between two consecutive points
-X = diff(numerical_loops.Ffr,1,2) ./ diff(numerical_loops.x,1,2);
+X = diff(loops.Ffr,1,2) ./ diff(loops.x,1,2);
 
 % derivative of x and Ffr over time
-% dxdt = diff(numerical_loops.x,1,2) ./ diff(numerical_loops.t,1,2);
-% dFdt = diff(numerical_loops.Ffr,1,2) ./ diff(numerical_loops.t,1,2);
+% dxdt = diff(loops.x,1,2) ./ diff(loops.t,1,2);
+% dFdt = diff(loops.Ffr,1,2) ./ diff(loops.t,1,2);
 % X = [dxdt dFdt];
 
-% y = numerical_loops.mu;
-y = numerical_loops.kt;
+% y = loops.mu;
+y = loops.kt;
 
 m = size(X,1);
-Xtrain = X(1:0.8*m,:);
-ytrain = y(1:0.8*m,:);
-Xtest = X(0.8*m+1:end,:);
-ytest = y(0.8*m+1:end,:);
+Xtrain = X(1:round(0.8*m),:);
+ytrain = y(1:round(0.8*m),:);
+Xtest = X(round(0.8*m)+1:end,:);
+ytest = y(round(0.8*m)+1:end,:);
 
 % normalise data
 [Xtrain, mu, sigma] = normalise_features(Xtrain);
@@ -76,12 +83,12 @@ opts = struct('HoldOut', holdout);
 %              'OptimizeHyperparameters', 'lambda', ...
 %              'HyperparameterOptimizationOptions', ...
 %              struct('AcquisitionFunctionName','expected-improvement-plus'))
-linearmdl = fitrlinear(Xtrain, ytrain, ...
-             'Learner', 'leastsquares', ...
-             'Regularization', 'ridge', ...
-             'Solver', 'lbfgs', ...
-             'OptimizeHyperparameters', 'lambda', ...
-             'HyperparameterOptimizationOptions', opts)
+% linearmdl = fitrlinear(Xtrain, ytrain, ...
+%              'Learner', 'leastsquares', ...
+%              'Regularization', 'ridge', ...
+%              'Solver', 'lbfgs', ...
+%              'OptimizeHyperparameters', 'lambda', ...
+%              'HyperparameterOptimizationOptions', opts)
 
 % load linearmdl_1;
 % cur_model = linearmdl_1;
@@ -126,8 +133,8 @@ linearmdl = fitrlinear(Xtrain, ytrain, ...
 % save GaussSVMmdl_noopt.mat GaussSVMmdl_noopt;
 
 %% Evaluate model performance
-% load linearmdl_2;
-y_pred = predict(linearmdl,Xtest);
+load linearmdl_3;
+y_pred = predict(linearmdl_3, Xtest);
 error = (y_pred-ytest)./ytest;
 
 figure;
