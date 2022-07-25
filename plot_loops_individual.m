@@ -13,6 +13,7 @@ for i = 1:n
     subplot(sqrt(n),sqrt(n),i)
     plot(x(i,:), Ffr(i,:), 'b.');
     hold on;
+    plot(x(i,1), Ffr(i,1), 'rx');
     yline(CL(i), '--r');
     yline(-CL(i), '--r');
     xlim([-max(X) max(X)]);

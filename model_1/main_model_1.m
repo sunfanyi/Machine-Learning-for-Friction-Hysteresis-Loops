@@ -6,21 +6,23 @@ close all;
 fex = 100;  % excitation frequency (Hz)
 N_cycles = 2;
 cycle_points = 600;
-m = 16;
+m = 10000;
 % random_value_generator = 'gmdistribution';
 random_value_generator = 'uniform';
 training_cycles = N_cycles;
 
 cd ..
-% cd create_numerical_loops
-% numerical_loops = create_loops(fex, N_cycles, cycle_points, m,...
-%     random_value_generator, training_cycles);
 
-load real_loops.mat;
-
+cd create_numerical_loops
+numerical_loops = create_loops(fex, N_cycles, cycle_points, m,...
+    random_value_generator, training_cycles);
 % loops = numerical_loops;
-loops = real_loops;
 
+% cd experimental_data
+% load real_loops.mat;
+% loops = real_loops;
+
+cd ..
 plot_loops_individual(loops(1:16,:));
 cd model_1
 
