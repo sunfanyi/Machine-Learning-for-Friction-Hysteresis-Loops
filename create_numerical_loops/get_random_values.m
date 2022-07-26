@@ -3,6 +3,7 @@ function [mu, N, kt, X] = get_random_values(m, random_value_generator)
 %   get_random_values(m, random_value_generator) returns m random values
 %   for each output parameter. The returned values are used to obtain
 %   numerical hysteresis loops for further machine learning.
+%
 %   randon_value_generator is the distribution used to generate random
 %   values, which can be:
 %      'gmdistribution'   The values are from a Gaussian mixture

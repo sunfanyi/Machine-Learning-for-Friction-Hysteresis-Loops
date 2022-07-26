@@ -66,8 +66,10 @@ real_loops = table(mu, N, CL, kt, X, Corners, CP, loop_idx, x, Ffr, t, ...
             'VariableNames', {'mu','N','CL','kt','X','Corners','CP','loop_idx','x','Ffr','t'});
 real_loops(real_loops.CP == 0,:) = []  % delete rows with incorrect data
 
+cd ..
 plot_loops_individual(real_loops(1:16,:));
-% save real_loops.mat real_loops
+cd experimental_data
+save real_loops.mat real_loops;
 
 % i = 1;
 % subplot(3,1,1);

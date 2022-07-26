@@ -33,6 +33,8 @@ for i = 1:n
     Freq_noise(i,:) = Freq;
 end
 
+save ..\create_numerical_loops\F_Ffr_noise.mat F_Ffr_noise;
+
 figure;
 subplot(2,1,1);
 plot(Freq, abs(F_x), '-+g');

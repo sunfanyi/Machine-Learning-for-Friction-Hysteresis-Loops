@@ -1,14 +1,24 @@
 function [numerical_loops] = create_loops(fex, N_cycles, cycle_points, ...
-            m, random_value_generator, training_cycles)
+            m, noise, random_value_generator, training_cycles)
 %CREATE_LOOPS generates numerical hysteresis loops for friction parameters.
 %   create_loops(fex, N_cycles, cycle_points, m, random_value_generator,
 %   training_cycles) returns the information of m numerical hysteresis
 %   loops each consist of N_cycles of cycles with random friction
-%   parameters, which can be used for further machine learning. fex is the
-%   excitation frequency [Hz]. cycle_points is the number of points each
-%   cycle has. training_cycles specifies the cycles to be extracted from
+%   parameters, which can be used for further machine learning. 
+%
+%   fex is the excitation frequency [Hz]
+%
+%   cycle_points is the number of points each cycle has
+%
+%   noise is a logical variable specifying whether random noise are added
+%   to the numerical loops. The random noise are extracted from the real
+%   experimental loops by FFT.
+%
+%   training_cycles specifies the cycles to be extracted from
 %   the evolution of the hysteresis loops, e.g., [2:4] will extract the
-%   second to fourth cycles. randon_value_generator is the 
+%   second to fourth cycles. 
+%
+%   randon_value_generator is the 
 %   distribution used to generate random values, which can be:  
 %      'gmdistribution'   The values are from a Gaussian mixture
 %                         distribuition. The mean and standard deviation
@@ -35,6 +45,10 @@ if ~exist('m', 'var') || isempty(m)
     m = 1000;
 end
 
+if ~exist('noise', 'var') || isempty(noise)
+    noise = false;
+end
+
 if ~exist('random_value_generator', 'var') || isempty(random_value_generator)
     random_value_generator = 'gmdistribution';
 end
@@ -56,6 +70,11 @@ v = diff(x,[],2) ./ diff(t,[],2);       % velocity signal
 Ffr = Jenkins_element(kt,x,CL);
     
 idx = (training_cycles(1)-1)*cycle_points + 1 : training_cycles(end)*cycle_points;
+
+if noise
+    Ffr(:,idx) = add_noise(Ffr(:,idx), cycle_points);
+end
+
 numerical_loops = table(mu, N, CL, kt, X, ...
                     x(:,idx), Ffr(:,idx), t(:,idx), ...
                     'VariableNames',{'mu','N','CL','kt','X','x','Ffr','t'});

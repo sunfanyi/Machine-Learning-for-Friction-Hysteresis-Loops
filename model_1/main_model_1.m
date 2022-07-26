@@ -7,18 +7,17 @@ fex = 100;  % excitation frequency (Hz)
 N_cycles = 2;
 cycle_points = 600;
 m = 10000;
+noise = true;
 % random_value_generator = 'gmdistribution';
 random_value_generator = 'uniform';
 training_cycles = N_cycles;
 
-cd ..
-
-cd create_numerical_loops
-numerical_loops = create_loops(fex, N_cycles, cycle_points, m,...
+cd ..\create_numerical_loops
+numerical_loops = create_loops(fex, N_cycles, cycle_points, m, noise, ...
     random_value_generator, training_cycles);
-% loops = numerical_loops;
+loops = numerical_loops;
 
-% cd experimental_data
+% cd ..\experimental_data
 % load real_loops.mat;
 % loops = real_loops;
 
@@ -47,10 +46,12 @@ X = diff(loops.Ffr,1,2) ./ diff(loops.x,1,2);
 y = loops.kt;
 
 m = size(X,1);
-Xtrain = X(1:round(0.8*m),:);
-ytrain = y(1:round(0.8*m),:);
-Xtest = X(round(0.8*m)+1:end,:);
-ytest = y(round(0.8*m)+1:end,:);
+pct = 0.8;  % percentage training set
+idx = randperm(m);
+Xtrain = X(idx(1:round(pct*m)),:);
+ytrain = y(idx(1:round(pct*m)),:);
+Xtest = X(idx(round(pct*m)+1:end),:);
+ytest = y(idx(round(pct*m)+1:end),:);
 
 % normalise data
 [Xtrain, mu, sigma] = normalise_features(Xtrain);
@@ -58,10 +59,10 @@ Xtest = (Xtest-mu)./sigma;
 
 
 %% linear regression
-% rng('default')
+rng('default')
 
-holdout = 0.25;
-opts = struct('HoldOut', holdout);
+% holdout = 0.25;
+% opts = struct('HoldOut', holdout);
 % optimizableParams = hyperparameters('fitrlinear', Xtrain, ytrain)
 % optimizableParams = optimizableParams(1)  % lambda only
 % 
@@ -79,12 +80,19 @@ opts = struct('HoldOut', holdout);
 %              'HyperparameterOptimizationOptions', ...
 %              struct('AcquisitionFunctionName','expected-improvement-plus'))
 % linearmdl = fitrlinear(Xtrain, ytrain, ...
-%              'Learner', 'leastsquares', ...
+%              'Learner', 'svm', ...
 %              'Regularization', 'ridge', ...
 %              'Solver', 'lbfgs', ...
 %              'OptimizeHyperparameters', 'lambda', ...
 %              'HyperparameterOptimizationOptions', ...
 %              struct('AcquisitionFunctionName','expected-improvement-plus'))
+linearmdl = fitrlinear(Xtrain, ytrain, ...
+             'Learner', 'svm', ...
+             'Regularization', 'ridge', ...
+             'Solver', 'lbfgs', ...
+             'OptimizeHyperparameters', 'lambda', ...
+             'HyperparameterOptimizationOptions', ...
+             struct('AcquisitionFunctionName','expected-improvement-plus','KFold', 5))
 % linearmdl = fitrlinear(Xtrain, ytrain, ...
 %              'Learner', 'leastsquares', ...
 %              'Regularization', 'ridge', ...
@@ -135,8 +143,8 @@ opts = struct('HoldOut', holdout);
 % save GaussSVMmdl_noopt.mat GaussSVMmdl_noopt;
 
 %% Evaluate model performance
-load linearmdl_3;
-y_pred = predict(linearmdl_3, Xtest);
+% load linearmdl_3;
+y_pred = predict(linearmdl, Xtest);
 error = (y_pred-ytest)./ytest;
 
 figure;
