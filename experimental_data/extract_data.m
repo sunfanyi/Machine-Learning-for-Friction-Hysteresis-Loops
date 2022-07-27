@@ -3,7 +3,7 @@ clear variables; close all;
 cycles = cell(34,1);
 n_loop = zeros(34, 1);  % number of loops in each condition cp
 for cp = 1:34
-    path = [pwd,'\Data Round Robin\CP',num2str(cp),'\cycle.mat'];
+    path = [pwd,'\..\Data Round Robin\CP',num2str(cp),'\cycle.mat'];
     load(path);
     cycles{cp} = cycle(1,:);
     n_loop(cp) = length(cycle(1,:));
@@ -30,7 +30,7 @@ t = repmat(t, n, 1);  % for now each loop has same time signal
 idx = 1;
 for cp = 1:34
     for i = 1:n_loop(cp)
-        path = [pwd, '\Data Round Robin\CP', num2str(cp), '\cycle', ...
+        path = [pwd, '\..\Data Round Robin\CP', num2str(cp), '\cycle', ...
                     num2str(cycles{cp}(i)), '.mat'];
         load(path);
         
@@ -69,7 +69,7 @@ real_loops(real_loops.CP == 0,:) = []  % delete rows with incorrect data
 cd ..
 plot_loops_individual(real_loops(1:16,:));
 cd experimental_data
-save real_loops.mat real_loops;
+% save real_loops.mat real_loops;
 
 % i = 1;
 % subplot(3,1,1);

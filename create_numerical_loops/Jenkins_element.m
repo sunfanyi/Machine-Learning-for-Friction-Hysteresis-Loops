@@ -1,22 +1,25 @@
-function [F] = Jenkins_element(kt,x,CL)
+function [F, mu, E] = Jenkins_element(kt, x, CL, mu)
 
 F = zeros(size(x));
 slip = zeros(size(x,1),1);
-
-% pct_chattering = 0.2*rand(size(x,1),1) + 0.9;
+flag_slip = zeros(size(x));
 
 for t = 1:size(x,2)
     F(:,t) = kt .* (x(:,t) - slip);
 
     % the loops which CL is reached at t:
     idx = abs(F(:,t)) > CL;
-
+    
     F(idx,t) = (CL(idx) .* sign(F(idx,t)));
     slip(idx) = (x(idx,t) - F(idx,t)./kt(idx));
-
-    % add chattering
-%     F(idx,t) = F(idx,t).*(abs(1+0.1*randn(nnz(idx),1)).*pct_chattering(idx));
+    flag_slip(idx,t) = 1;
 end
+
+E = polyarea(x, F, 2)*10^(-6);
+
+% no slip occurs means no energy dissipated thus zero mu
+E(all(~flag_slip,2)) = 0;
+mu(all(~flag_slip,2)) = 0;
 
 end
 

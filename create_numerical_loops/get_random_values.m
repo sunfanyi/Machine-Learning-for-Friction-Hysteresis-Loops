@@ -44,19 +44,19 @@ if random_value_generator == "gmdistribution"
     X = abs(random(gmd,m));
 elseif random_value_generator == "uniform"
     % friction coefficient mu
-    interval = [0.2 1.8];
+    interval = [0.2 2];
     mu = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % normal load N [N]
-    interval = [10 400];
+    interval = [10 500];
     N = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % contact stiffness kt [N/mum]
-    interval = [5 2000];
+    interval = [5 1800];
     kt = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % Displ amplitude X [mum]
-    interval = [0.1 100];
+    interval = [0.1 80];
     X = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
 end
 
