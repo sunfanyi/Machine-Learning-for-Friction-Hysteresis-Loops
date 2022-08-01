@@ -7,7 +7,7 @@ fex = 100;  % excitation frequency (Hz)
 N_cycles = 2;
 cycle_points = 600;
 m = 1000;
-noise = false;
+noise = true;
 % random_value_generator = 'gmdistribution';
 random_value_generator = 'uniform';
 training_cycles = N_cycles;
@@ -24,8 +24,9 @@ loops = numerical_loops;
 % load loops_1k_uniform.mat
 % loops = loops_1k_uniform;
 
+normalise = false;
 cd ..
-plot_loops_individual(loops(1:16,:));
+plot_loops_individual(loops(1:16,:), normalise);
 cd model_1
 %% choose features for training
 
@@ -54,7 +55,7 @@ Xtest = X(idx(round(pct*m)+1:end),:);
 ytest = y(idx(round(pct*m)+1:end),:);
 
 % normalise data
-% [Xtrain, mu, sigma] = normalise_features(Xtrain);
+% [Xtrain, mu, sigma] = standarise_features(Xtrain);
 % Xtest = (Xtest-mu)./sigma;
 
 rng('default');

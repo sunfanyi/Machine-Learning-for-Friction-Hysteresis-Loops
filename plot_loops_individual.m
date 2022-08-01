@@ -1,4 +1,9 @@
-function [] = plot_loops_individual(loops)
+function [] = plot_loops_individual(loops, normalise)
+
+% set default values
+if ~exist('normalise', 'var') || isempty(normalise)
+    normalise = false;
+end
 
 n = size(loops, 1);
 x = loops.x;
@@ -14,10 +19,12 @@ for i = 1:n
     plot(x(i,:), Ffr(i,:), 'b.');
     hold on;
     plot(x(i,1), Ffr(i,1), 'rx');
-    yline(CL(i), '--r');
-    yline(-CL(i), '--r');
-    xlim([-max(X) max(X)]);
-    ylim([-max(Ffr(:)) max(Ffr(:))]);
+    if ~normalise
+        yline(CL(i), '--r');
+        yline(-CL(i), '--r');
+        xlim([-max(X) max(X)]);
+        ylim([-max(Ffr(:)) max(Ffr(:))]);
+    end
     xlabel('Relative Displacement [\mu m]');
     if mod(i,sqrt(n)) == 1
         ylabel('Friction Force [N]');

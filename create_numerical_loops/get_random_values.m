@@ -52,11 +52,11 @@ elseif random_value_generator == "uniform"
     N = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % contact stiffness kt [N/mum]
-    interval = [5 1800];
+    interval = [5 200];
     kt = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % Displ amplitude X [mum]
-    interval = [0.1 80];
+    interval = [0.1 60];
     X = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
 end
 

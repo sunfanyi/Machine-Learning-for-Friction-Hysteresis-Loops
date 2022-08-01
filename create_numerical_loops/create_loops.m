@@ -67,16 +67,21 @@ CL = mu .* N;         % Coulomb friction limit [N]
 x = X .* sin(2*pi*fex*t);             % excitation displ [mum]
 v = diff(x,[],2) ./ diff(t,[],2);       % velocity signal
 
-[Ffr, E, mu] = Jenkins_element(kt, x, CL, mu);
+[Ffr, mu, E] = Jenkins_element(kt, x, CL, mu);
+slip = single(mu ~= 0);
 
 idx = (training_cycles(1)-1)*cycle_points + 1 : training_cycles(end)*cycle_points;
+x = x(:,idx);
+Ffr = Ffr(:,idx);
+t = t(:,idx);
 
 if noise
-    Ffr(:,idx) = add_noise(Ffr(:,idx), cycle_points);
+    Ffr = add_noise(Ffr, cycle_points);
 end
+area = polyarea(x, Ffr, 2)*10^(-6);  % energy dissipated area noise is added
 
-numerical_loops = table(mu, N, CL, kt, E, X, ...
-                x(:,idx), Ffr(:,idx), t(:,idx), ...
-                'VariableNames',{'mu','N','CL','kt','E','X','x','Ffr','t'});
+numerical_loops = table(mu, N, CL, kt, area, slip, E, X, x, Ffr, t, ...
+                'VariableNames',...
+                {'mu','N','CL','kt','area','slip','E','X','x','Ffr','t'});
 
 end
