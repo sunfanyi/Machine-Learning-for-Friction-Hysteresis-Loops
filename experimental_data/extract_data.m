@@ -57,19 +57,35 @@ for cp = 1:34
         Corners(idx,:) = corners;
         CP(idx) = cp;
         loop_idx(idx) = cycles{cp}(i);
+        
+        if kt(idx) <= 0
+            fprintf('negative kt in CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
+        end
+        if mu(idx) < 0
+            fprintf('negative mu in CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
+        end
+            
         idx = idx + 1;
     end
 end
 
 N = CL ./ mu;
-real_loops = table(mu, N, CL, kt, X, Corners, CP, loop_idx, x, Ffr, t, ...
-            'VariableNames', {'mu','N','CL','kt','X','Corners','CP','loop_idx','x','Ffr','t'});
-real_loops(real_loops.CP == 0,:) = []  % delete rows with incorrect data
+slip = single(mu ~= 0);
+area = polyarea(x, Ffr, 2)*10^(-6);  % area after noise is added
+real_loops_original = table(mu, N, CL, kt, area, slip, X, Corners, CP, loop_idx, x, Ffr, t, ...
+            'VariableNames', ...
+            {'mu','N','CL','kt','area','slip','X','Corners','CP','loop_idx','x','Ffr','t'});
+        
+real_loops = real_loops_original;
+real_loops(real_loops.CP == 0,:) = [];  % delete rows with incorrect data
+real_loops(real_loops.kt <= 0,:) = [];  % delete rows with negative kt
+real_loops(real_loops.mu < 0,:) = [];  % delete rows with negative mu
 
 cd ..
 plot_loops_individual(real_loops(1:16,:));
 cd experimental_data
-% save real_loops.mat real_loops;
+save real_loops.mat real_loops;
+save real_loops_original.mat real_loops_original;
 
 % i = 1;
 % subplot(3,1,1);

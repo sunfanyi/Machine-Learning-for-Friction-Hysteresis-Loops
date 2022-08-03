@@ -38,8 +38,8 @@ for i = 1:n
     hold on;
     plot(t(i,:),Ffr(i,:),'.');
     xlabel('Time [s]');
-%     yline(CL(i), '--r');
-%     yline(-CL(i), '--r');
+    yline(CL(i), '--r');
+    yline(-CL(i), '--r');
     legend('Relative Displacement [\mu m]', 'Friction Force [N]');
 end
 

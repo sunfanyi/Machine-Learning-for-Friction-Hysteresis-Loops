@@ -8,8 +8,8 @@ N_cycles = 2;
 cycle_points = 600;
 m = 1000;
 noise = true;
-% random_value_generator = 'gmdistribution';
-random_value_generator = 'uniform';
+random_value_generator = 'gmdistribution';
+% random_value_generator = 'uniform';
 training_cycles = N_cycles;
 
 cd ..\create_numerical_loops
@@ -24,8 +24,8 @@ loops = numerical_loops;
 % load loops_1k_uniform.mat
 % loops = loops_1k_uniform;
 
-normalise = false;
 cd ..
+normalise = false;
 plot_loops_individual(loops(1:16,:), normalise);
 cd model_1
 %% choose features for training

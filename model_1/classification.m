@@ -1,15 +1,15 @@
 clear variables;
 
 %% generate numerical data
-close all; 
 
 fex = 100;  % excitation frequency (Hz)
 N_cycles = 2;
 cycle_points = 600;
-m = 1000;
+m = 3000;
 noise = true;
-% random_value_generator = 'gmdistribution';
-random_value_generator = 'uniform';
+random_value_generator = 'gmdistribution';
+% random_value_generator = 'uniform';
+% random_value_generator = 'more_stick';
 training_cycles = N_cycles;
 
 cd ..\create_numerical_loops
@@ -25,12 +25,12 @@ loops = numerical_loops;
 % loops = loops_1k_uniform;
 
 cd ..\model_1
-x_range = max(loops.x,[],2) - min(loops.x,[],2);
-Ffr_range = max(loops.Ffr,[],2) - min(loops.Ffr,[],2);
 
 %% choose features for training
 
 % load loops_10k.mat
+x_range = max(loops.x,[],2) - min(loops.x,[],2);
+Ffr_range = max(loops.Ffr,[],2) - min(loops.Ffr,[],2);
 dFdx = diff(loops.Ffr,1,2) ./ diff(loops.x,1,2);
 X = [loops.area x_range Ffr_range dFdx];
 
@@ -63,38 +63,24 @@ SVMmdl = fitcsvm(Xtrain, ytrain,...
         'HyperparameterOptimizationOptions',...
         struct('AcquisitionFunctionName','expected-improvement-plus'))
 %% Evaluate model performance
+close all;
 % load linearmdl_3;
-if ~SVMmdl.ConvergenceInfo.Converged
-    disp('not convergent');
-else
-    disp('convergent');
-end
 
-% % try predicting experimental data
-% cd ..\experimental_data
-% load real_loops.mat;
-% dFdx = diff(real_loops.Ffr,1,2) ./ diff(real_loops.x,1,2);
-% X = [real_loops.area x_range Ffr_range dFdx];
-% ytest = real_loops.kt;
-% cd ..\model_1
+fprintf('Accuracy on numerical loops:\n');
+error_loops = evaluate_mdl_classification(SVMmdl, Xtrain, ytrain, ...
+                                    Xtest, ytest, loops_test);
+                            
+% try predicting experimental data
+cd ..\experimental_data
+load real_loops.mat;
+cd ..\model_1
+x_range = max(real_loops.x,[],2) - min(real_loops.x,[],2);
+Ffr_range = max(real_loops.Ffr,[],2) - min(real_loops.Ffr,[],2);
+dFdx = diff(real_loops.Ffr,1,2) ./ diff(real_loops.x,1,2);
+X_real = [real_loops.area x_range Ffr_range dFdx];
+y_real = real_loops.slip;
 
-y_pred = predict(SVMmdl, Xtest);
-fprintf('Training Accuracy: %0.2f %%| Test Accuracy : %0.2f %% | Failures: %d over %d\n', ...
-        mean(predict(SVMmdl, Xtrain) == ytrain)*100, ...
-        mean(y_pred == ytest)*100, ...
-        mean(y_pred ~= ytest)*size(ytest,1), size(ytest,1));
+fprintf('Accuracy on experimental loops:\n');
+error_loops_real = evaluate_mdl_classification(SVMmdl, nan, nan, ...
+                                    X_real, y_real, real_loops);
 
-figure;
-error_loops = loops_test(y_pred ~= ytest, :);
-if size(error_loops,1) > 9
-    error_loops = error_loops(1:9, :);
-end
-
-for i = 1:size(error_loops,1)
-    subplot(3,3,i);
-    plot(error_loops.x(i,:), error_loops.Ffr(i,:), 'b.');
-    xlabel('Relative Displacement [\mu m]');
-    if mod(i,3) == 1
-        ylabel('Friction Force [N]');
-    end
-end

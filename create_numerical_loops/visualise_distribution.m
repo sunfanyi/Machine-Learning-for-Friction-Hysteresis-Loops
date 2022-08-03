@@ -1,8 +1,9 @@
-close all; clear variables;
+% close all;
+clear variables;
 
 m = 10000;
-% random_value_generator = 'gmdistribution';
-random_value_generator = 'uniform';
+random_value_generator = 'gmdistribution';
+% random_value_generator = 'uniform';
 [mu, N, kt, X] = get_random_values(m, random_value_generator);
     
 % Plot histograms
@@ -22,3 +23,5 @@ title('Contact stiffness kt');
 subplot(2,2,4)
 histogram(X,100);
 title('Displacement amplitude X');
+
+sgtitle(random_value_generator);
