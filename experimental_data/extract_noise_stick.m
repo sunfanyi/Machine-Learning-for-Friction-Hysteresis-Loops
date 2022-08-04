@@ -38,13 +38,11 @@ for i = 1:m
     
     F_Ffr(i,:) = fft(Ffr(i,:));
     F_Ffr_ideal(i,:) = fft(Ffr_ideal(i,:));
-    % extract noise
-    F_noise(i,:) = F_Ffr(i,:) - F_Ffr_ideal(i,:);
-%     idx = randsample(size(F_Ffr_noise,1),1);
-%     F_Ffr_with_noise(i,:) = F_Ffr(i,:) + F_Ffr_noise(idx,:);
-%     
-%     Ffr_with_noise(i,:) = real(ifft(F_Ffr_with_noise(i,:)));
+    F_noise(i, :) = F_Ffr(i,:) - F_Ffr_ideal(i,:);  % extract noise
 end
+
+F_noise(:, [11 N_cycles*600-9]) = 0; % delete original frequency
+F_noise(F_noise<0) = 0; % delete negative contents
 
 noise_info_stick = table(F_noise, mu, N, kt, X, 'VariableNames', ...
                     {'F_noise', 'mu', 'N', 'kt', 'X'});
@@ -102,5 +100,4 @@ plot(Freq, abs(F_noise(i,:)), '-+g');
 xlabel('Frequency of noise content');
 ylabel('Amplitude');
 xlim([0 Freq(end)/2]);  % display up to Nyquist Frequency
-
-% save ..\create_numerical_loops\F_Ffr_noise.mat F_Ffr_noise;
+ylim([0 6000]);

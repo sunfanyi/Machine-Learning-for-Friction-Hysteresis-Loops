@@ -24,7 +24,7 @@ loop_idx = zeros(n, 1);
 Corners = zeros(n, 4);
 
 T = 1/fex;       % timelength of input [s]
-t = linspace(0,T,cycle_points);
+t = linspace(0,T-T/cycle_points,cycle_points);
 t = repmat(t, n, 1);  % for now each loop has same time signal
 
 idx = 1;
@@ -34,21 +34,27 @@ for cp = 1:34
                     num2str(cycles{cp}(i)), '.mat'];
         load(path);
         
-        % change the starting point of the loop
-        temp_x = hyst(:,1);
-        temp_Ffr = hyst(:,2);
+        temp_x = make_periodic(hyst(:,1));
+        temp_Ffr = make_periodic(hyst(:,2));
+%         temp_x = hyst(:,1);
+%         temp_Ffr = hyst(:,2);
+
         % find the point with x closest to 0 while F>0
         [val,~] = min(abs(temp_x(temp_Ffr > 0)));
         if isempty(val)
             idx = idx + 1;
             n = n - 1;
-            fprintf('incorrect data in CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
+            fprintf('all force signals are negative CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
             continue;
         end
+        % change the starting point of the loop
         start_idx = find(abs(temp_x) == val);
         x(idx,:) = circshift(temp_x, (cycle_points-start_idx+1));
         Ffr(idx,:) = circshift(temp_Ffr, (cycle_points-start_idx+1));
-            
+
+%         x(idx,:) = temp_x;
+%         Ffr(idx,:) = temp_Ffr;
+        
         mu(idx) = mu_Fs_ktL_ktR_m1_Fex_slip_muE(end,1);
         CL(idx) = mu_Fs_ktL_ktR_m1_Fex_slip_muE(end,2);
         kt(idx) = (mu_Fs_ktL_ktR_m1_Fex_slip_muE(end,3) + ...
@@ -82,10 +88,10 @@ real_loops(real_loops.kt <= 0,:) = [];  % delete rows with negative kt
 real_loops(real_loops.mu < 0,:) = [];  % delete rows with negative mu
 
 cd ..
-plot_loops_individual(real_loops(1:16,:));
+plot_loops_individual(real_loops([1 20 50 70 100 120 140 160 200],:));
 cd experimental_data
-save real_loops.mat real_loops;
-save real_loops_original.mat real_loops_original;
+% save real_loops.mat real_loops;
+% save real_loops_original.mat real_loops_original;
 
 % i = 1;
 % subplot(3,1,1);
@@ -94,4 +100,3 @@ save real_loops_original.mat real_loops_original;
 % plot(t(i,corners), x(i,corners),'rx');
 % subplot(3,1,3);
 % plot(t(i,corners), Ffr(i,corners),'rx');
-

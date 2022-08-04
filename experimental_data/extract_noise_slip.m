@@ -5,7 +5,7 @@ load("real_loops.mat");
 % extract loops with gross slip
 loops_slip = real_loops(real_loops.slip == 1, :);
 
-N_cycles = 1;
+N_cycles = 10;
 T = 0.01;       % timelength of input [s]
 t = linspace(0, N_cycles*T, N_cycles*600);
 
@@ -27,7 +27,7 @@ F_Ffr = zeros(m, N_cycles*600);
 F_Ffr_ideal = zeros(m, N_cycles*600);
 F_noise = zeros(m, N_cycles*600);
 
-for i = 150
+for i = 1:m
     % Remove noise manually
     cd ..\create_numerical_loops
     % use CL, kt, mu values to reconstruct the loop (force response)
@@ -38,19 +38,17 @@ for i = 150
     
     F_Ffr(i,:) = fft(Ffr(i,:));
     F_Ffr_ideal(i,:) = fft(Ffr_ideal(i,:));
-    % extract noise
-    F_noise(i,:) = F_Ffr(i,:) - F_Ffr_ideal(i,:);
-%     idx = randsample(size(F_Ffr_noise,1),1);
-%     F_Ffr_with_noise(i,:) = F_Ffr(i,:) + F_Ffr_noise(idx,:);
-%     
-%     Ffr_with_noise(i,:) = real(ifft(F_Ffr_with_noise(i,:)));
+    F_noise(i,:) = F_Ffr(i,:) - F_Ffr_ideal(i,:);  % extract noise
 end
+
+F_noise(:, [11 N_cycles*600-9]) = 0; % delete original frequency
+F_noise(F_noise<0) = 0; % delete negative contents
 
 noise_info_slip = table(F_noise, mu, N, kt, X, 'VariableNames', ...
                     {'F_noise', 'mu', 'N', 'kt', 'X'});
-% save ..\create_numerical_loops\noise_info_slip.mat noise_info_slip;
+save ..\create_numerical_loops\noise_info_slip.mat noise_info_slip;
 %% Demonstrate result
-i = 150;
+i = 1000;
 % cd ..
 % plot_loops_individual(loops_slip(i,:));
 % cd experimental_data
@@ -102,4 +100,3 @@ plot(Freq, abs(F_noise(i,:)), '-+g');
 xlabel('Frequency of noise content');
 ylabel('Amplitude');
 xlim([0 Freq(end)/2]);  % display up to Nyquist Frequency
-

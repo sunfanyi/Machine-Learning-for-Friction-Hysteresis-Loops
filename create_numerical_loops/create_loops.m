@@ -57,8 +57,8 @@ if ~exist('training_cycles', 'var') || isempty(training_cycles)
     training_cycles = N_cycles;  % last cycle only
 end
 
-T = N_cycles/fex;       % timelength of input [s]
-t = linspace(0,T,N_cycles*cycle_points);
+T = 1/fex;       % period [s]
+t = linspace(0, N_cycles*T - T/cycle_points, N_cycles*cycle_points);
 t = repmat(t, m, 1);  % for now each loop has same time signal
 
 [mu, N, kt, X] = get_random_values(m, random_value_generator);
@@ -76,9 +76,13 @@ x = x(:,idx);
 Ffr = Ffr(:,idx);
 t = t(:,idx);
 
-if noise
+if noise == "fft"
     parameters = [mu N kt X];
-    Ffr = add_noise(Ffr, parameters, slip, cycle_points);
+    Ffr = add_noise_fft(Ffr, parameters, slip);
+    cd ..\experimental_data
+    Ffr = make_periodic(Ffr);
+    cd ..\create_numerical_loops
+% else if noise == "normaldist"
 end
 area = polyarea(x, Ffr, 2)*10^(-6);  % area after noise is added
 
