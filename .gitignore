@@ -4,6 +4,8 @@
 *.mat
 !/create_numerical_loops/noise_info_slip.mat
 !/create_numerical_loops/noise_info_stick.mat
+!/experimental_data/real_loops.mat
+!/model_1/classification_mdl.mat
 
 /Data Round Robin/
 

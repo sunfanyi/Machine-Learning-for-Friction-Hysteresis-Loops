@@ -34,8 +34,8 @@ for cp = 1:34
                     num2str(cycles{cp}(i)), '.mat'];
         load(path);
         
-        temp_x = make_periodic(hyst(:,1));
-        temp_Ffr = make_periodic(hyst(:,2));
+        temp_x = make_periodic(hyst(:,1)');
+        temp_Ffr = make_periodic(hyst(:,2)');
 %         temp_x = hyst(:,1);
 %         temp_Ffr = hyst(:,2);
 
@@ -69,6 +69,10 @@ for cp = 1:34
         end
         if mu(idx) < 0
             fprintf('negative mu in CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
+        elseif mu(idx) >= 2
+            fprintf('mu >= 2 in CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
+        elseif isnan(mu(idx))
+            fprintf('missing mu in CP%d/cycle%d.mat\n',cp,cycles{cp}(i));
         end
             
         idx = idx + 1;
@@ -86,12 +90,14 @@ real_loops = real_loops_original;
 real_loops(real_loops.CP == 0,:) = [];  % delete rows with incorrect data
 real_loops(real_loops.kt <= 0,:) = [];  % delete rows with negative kt
 real_loops(real_loops.mu < 0,:) = [];  % delete rows with negative mu
+real_loops(isnan(real_loops.mu),:) = []  % delete rows without mu, CL & N
+real_loops(real_loops.mu >= 2,:) = [];  % delete rows with very high mu
 
 cd ..
 plot_loops_individual(real_loops([1 20 50 70 100 120 140 160 200],:));
 cd experimental_data
-% save real_loops.mat real_loops;
-% save real_loops_original.mat real_loops_original;
+save real_loops.mat real_loops;
+save real_loops_original.mat real_loops_original;
 
 % i = 1;
 % subplot(3,1,1);

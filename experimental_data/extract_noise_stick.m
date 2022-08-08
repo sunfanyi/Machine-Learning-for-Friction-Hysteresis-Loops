@@ -42,7 +42,7 @@ for i = 1:m
 end
 
 F_noise(:, [11 N_cycles*600-9]) = 0; % delete original frequency
-F_noise(F_noise<0) = 0; % delete negative contents
+% F_noise(F_noise<0) = 0; % delete negative contents
 
 noise_info_stick = table(F_noise, mu, N, kt, X, 'VariableNames', ...
                     {'F_noise', 'mu', 'N', 'kt', 'X'});

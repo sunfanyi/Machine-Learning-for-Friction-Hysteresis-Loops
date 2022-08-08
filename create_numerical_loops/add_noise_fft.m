@@ -37,7 +37,7 @@ for i = 1:m
         F_Ffr_with_noise = F_Ffr + noise_info_slip.F_noise(idx,:);
     else
         idx = dsearchn(table2array(noise_info_stick(:,2:5)), parameters(i,:));
-        F_Ffr_with_noise = F_Ffr + noise_info_stick.F_noise(idx,:);
+        F_Ffr_with_noise = F_Ffr + 2*noise_info_stick.F_noise(idx,:);
     end
     
     Ffr_with_noise(i,:) = real(ifft(F_Ffr_with_noise));

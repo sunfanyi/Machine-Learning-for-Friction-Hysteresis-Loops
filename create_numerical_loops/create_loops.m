@@ -69,6 +69,7 @@ v = diff(x,[],2) ./ diff(t,[],2);       % velocity signal
 
 Ffr_offset = false;
 [Ffr, mu, E] = Jenkins_element(kt, x, CL, mu, Ffr_offset);
+E = E/N_cycles;
 slip = single(mu ~= 0);
 
 idx = (training_cycles(1)-1)*cycle_points + 1 : training_cycles(end)*cycle_points;

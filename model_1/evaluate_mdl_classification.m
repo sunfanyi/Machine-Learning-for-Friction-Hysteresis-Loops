@@ -16,25 +16,27 @@ fprintf('Test Accuracy : %0.2f%% | Failures: %d over %d\n\n', ...
         mean(y_pred == ytest)*100, ...
         mean(y_pred ~= ytest)*size(ytest,1), size(ytest,1));
 
-error_loops = loops_test(y_pred ~= ytest, :);
+error_idx = find(y_pred ~= ytest);
+error_loops = loops_test(error_idx, :);
 
 figure;
-i = 1;
-while (i <= 9) && (i <= size(error_loops,1))
+if length(error_idx) > 9
+    error_idx = randsample(error_idx, 9);
+end
+
+for i = 1:length(error_idx)
     subplot(3,3,i);
-    plot(error_loops.x(i,:), error_loops.Ffr(i,:), 'b.');
+    plot(loops_test.x(error_idx(i),:), loops_test.Ffr(error_idx(i),:), 'b.');
     xlabel('Relative Displacement [\mu m]');
     if mod(i,3) == 1
         ylabel('Friction Force [N]');
     end
 
-    if error_loops.slip(i)
-        title('slip');
+    if loops_test.slip(error_idx(i))
+        title(sprintf('%d: slip', error_idx(i)));
     else
-        title('no slip');
+        title(sprintf('%d: stick', error_idx(i)));
     end
-    
-    i = i + 1;
 end
 
 end
