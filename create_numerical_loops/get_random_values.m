@@ -60,18 +60,22 @@ elseif random_value_generator == "uniform"
     X = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
 elseif random_value_generator == "more_stick"
     % friction coefficient mu
-    mean = [0.8];  % mean
-    sd = 0.3;    % standard deviation
-    p = ones(1,length(mean)) / length(mean);
-    gmd = gmdistribution(mean,sd.^2,p);  % Create the Gaussian Mixture Model
-    mu = abs(random(gmd,m));
+%     mean = [0.8];  % mean
+%     sd = 0.3;    % standard deviation
+%     p = ones(1,length(mean)) / length(mean);
+%     gmd = gmdistribution(mean,sd.^2,p);  % Create the Gaussian Mixture Model
+%     mu = abs(random(gmd,m));
+    interval = [0.2 2];
+    mu = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % normal load N [N]
-    mean = [17; 87; 150; 253];
-    sd = cat(5, 5, 20, 30, 30);
-    p = [9 9 20 30];    
-    gmd = gmdistribution(mean,sd.^2,p);
-    N = abs(random(gmd,m));
+%     mean = [17; 87; 150; 253];
+%     sd = cat(5, 5, 20, 30, 30);
+%     p = [9 9 20 30];    
+%     gmd = gmdistribution(mean,sd.^2,p);
+%     N = abs(random(gmd,m));
+    interval = [10 300];
+    N = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
     
     % contact stiffness kt [N/mum]
     mean = [50; 170];
@@ -86,6 +90,8 @@ elseif random_value_generator == "more_stick"
     p = [20 20 10 5];
     gmd = gmdistribution(mean,sd.^2,p);
     X = abs(random(gmd,m));
+%     interval = [0.1 30];
+%     X = interval(1) + (interval(2)-interval(1)) .* rand(m,1);
 end
 
 end

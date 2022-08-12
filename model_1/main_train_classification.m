@@ -23,37 +23,28 @@ loops = outerjoin(numerical_loops, real_loops, 'MergeKeys', true);
 
 fprintf('%0.2f%%\n',nnz(loops.slip==0)/size(loops,1));
 
-%% choose features for training
-x_range = max(loops.x,[],2) - min(loops.x,[],2);
-Ffr_range = max(loops.Ffr,[],2) - min(loops.Ffr,[],2);
-X = [loops.area./x_range loops.area./Ffr_range];  % predictor
-
-y = loops.slip;  % response
-
-m = size(X,1);
-pct = 0.8;  % percentage training set
-idx = randperm(m);
-Xtrain = X(idx(1:round(pct*m)),:);
-ytrain = y(idx(1:round(pct*m)),:);
-Xtest = X(idx(round(pct*m)+1:end),:);
-ytest = y(idx(round(pct*m)+1:end),:);
-loops_test = loops(idx,:);
+pct_train = 0.8;
+[~, loops_test, Xtrain, ytrain, Xtest, ytest] = choose_features(loops, ...
+                        "slip", pct_train);
 
 %% Training
 rng('default');
-classification_mdl = fitcsvm(Xtrain, ytrain,...
+mdl_classification = fitcsvm(Xtrain, ytrain,...
             'Standardize', true, ...
             'KernelFunction', 'gaussian', ...
             'OptimizeHyperparameters',{'BoxConstraint','KernelScale'},...
             'HyperparameterOptimizationOptions',...
             struct('AcquisitionFunctionName','expected-improvement-plus'))
-
-% save classification_mdl.mat classification_mdl
+        
+% save mdl_classification.mat mdl_classification
 %% Evaluate model performance
-fprintf('Accuracy on test set:\n');
-error_loops_test = evaluate_mdl_classification(classification_mdl, ...
-                        Xtrain, ytrain, Xtest, ytest, loops_test);
-sgtitle('misclassification in test set');
+fprintf('Training Accuracy: %0.2f%%\n\n ', ...
+            mean(predict(mdl_classification, Xtrain) == ytrain)*100);
+        
+fprintf('Accuracy on testing set:\n');
+error_loops_test = evaluate_mdl_classification(mdl_classification, ...
+                        Xtest, ytest, loops_test);
+sgtitle('misclassification in testing set');
                             
 % try predicting experimental loops
 x_range = max(real_loops.x,[],2) - min(real_loops.x,[],2);
@@ -62,8 +53,8 @@ X_real = [real_loops.area./x_range real_loops.area./Ffr_range];
 y_real = real_loops.slip;
 
 fprintf('Accuracy on experimental loops:\n');
-error_loops_real = evaluate_mdl_classification(classification_mdl, ...
-                    nan, nan, X_real, y_real, real_loops);
+error_loops_real = evaluate_mdl_classification(mdl_classification, ...
+                    X_real, y_real, real_loops);
 sgtitle('misclassification in real loops');
 
 % try predicting numerical loops
@@ -73,6 +64,6 @@ X_numerical = [numerical_loops.area./x_range numerical_loops.area./Ffr_range];
 y_numerical = numerical_loops.slip;
 
 fprintf('Accuracy on numerical loops:\n');
-error_loops_numerical = evaluate_mdl_classification(classification_mdl, ...
-                    nan, nan, X_numerical, y_numerical, numerical_loops);
+error_loops_numerical = evaluate_mdl_classification(mdl_classification, ...
+                    X_numerical, y_numerical, numerical_loops);
 sgtitle('misclassification in numerical loops');

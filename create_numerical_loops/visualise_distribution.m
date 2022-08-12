@@ -2,8 +2,9 @@
 clear variables;
 
 m = 10000;
-random_value_generator = 'gmdistribution';
-% random_value_generator = 'uniform';
+% random_value_generator = 'gmdistribution';
+random_value_generator = 'uniform';
+% random_value_generator = 'more_stick';
 [mu, N, kt, X] = get_random_values(m, random_value_generator);
     
 % Plot histograms
