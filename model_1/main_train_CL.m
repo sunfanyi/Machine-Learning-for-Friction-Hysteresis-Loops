@@ -35,6 +35,7 @@ fprintf('Percentage of loops correctly classified: %0.2f%%\n', ...
             mean(y_pred == ytest)*100);
         
 loops_slip = loops_test(y_pred == 1,:);
+% loops_stick = loops_test(y_pred == 0,:);
 
 cd ..
 normalise = false;
