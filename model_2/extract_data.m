@@ -1,11 +1,10 @@
-clear variables; close all;
+function [test_data] = extract_data()
 
 x = zeros(34, 600);
 Ffr = zeros(34, 600);
 
 ktL = zeros(34,1);
 ktR = zeros(34,1);
-kt = zeros(34,1);
 mu = zeros(34,1);
 
 N = zeros(34,1);
@@ -90,22 +89,11 @@ for cp = 1:34
 end
 
 kt = (ktL + ktR) / 2;
+slip = single(mu ~= 0);
 
-data = table(ktL, ktR, kt, mu, N, X, A_norm, A_worn, x, Ffr, ...
+test_data = table(ktL, ktR, kt, mu, slip, N, X, A_norm, A_worn, x, Ffr, ...
             'VariableNames', ...
-            {'ktL','ktR','kt','mu','N','X','A_norm','A_worn','x','Ffr'});
-        
-% figure;
-% plot(hyst(:,1),hyst(:,2));
-% 
-% figure;
-% plot(output.mu,'x')
-% yline(mean(output.mu))
-% 
-% figure;
-% plot(output.kL,'x')
-% yline(mean(output.kL))
-% 
-% figure;
-% plot(output.kR,'x')
-% yline(mean(output.kR))
+            {'ktL','ktR','kt','mu','slip','N','X','A_norm','A_worn','x','Ffr'});
+test_data(isnan(test_data.kt),:) = [];
+
+end
