@@ -36,8 +36,6 @@ for cp = 1:34
         
         temp_x = make_periodic(hyst(:,1)');
         temp_Ffr = make_periodic(hyst(:,2)');
-%         temp_x = hyst(:,1);
-%         temp_Ffr = hyst(:,2);
 
         % find the point with x closest to 0 while F>0
         [val,~] = min(abs(temp_x(temp_Ffr > 0)));
@@ -51,9 +49,6 @@ for cp = 1:34
         start_idx = find(abs(temp_x) == val);
         x(idx,:) = circshift(temp_x, (cycle_points-start_idx+1));
         Ffr(idx,:) = circshift(temp_Ffr, (cycle_points-start_idx+1));
-
-%         x(idx,:) = temp_x;
-%         Ffr(idx,:) = temp_Ffr;
         
         mu(idx) = mu_Fs_ktL_ktR_m1_Fex_slip_muE(end,1);
         CL(idx) = mu_Fs_ktL_ktR_m1_Fex_slip_muE(end,2);
