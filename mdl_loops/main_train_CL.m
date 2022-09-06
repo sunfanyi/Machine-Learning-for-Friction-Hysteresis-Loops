@@ -63,3 +63,5 @@ fprintf('\n========== CL ==========\n');
 fprintf('Training error: %0.2f%%\n', ...
             mean(abs((predict(mdl_CL, Xtrain)-ytrain)./ytrain))*100);
 [y_pred, error] = evaluate_mdl_reg(mdl_CL, Xtest, ytest);
+
+%% Evaluate model performance with experimental data

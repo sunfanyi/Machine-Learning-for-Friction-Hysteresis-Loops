@@ -1,8 +1,18 @@
 function [loops_train, loops_test, Xtrain, ytrain, Xtest, ytest] = ...
-    choose_features(loops, response, pct_training)
+    choose_features(loops, response, pct_training, random)
+
+% set default values
+if ~exist('random', 'var') || isempty(random)
+    random = true;
+end
 
 m = size(loops,1);
-idx = randperm(m);
+if random
+    idx = randperm(m);
+else
+    idx = 1:m;
+end
+
 % split testing and training set
 loops_train = loops(idx(1:round(pct_training*m)),:);
 loops_test = loops(idx(round(pct_training*m)+1:end),:);
