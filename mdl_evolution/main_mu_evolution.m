@@ -6,7 +6,7 @@ load evoluation_mu_kt.mat
 cd ..\experimental_data
 load real_loops
 cd ..\mdl_evolution
-cp = 1;
+cp = 20;
 loops = real_loops(real_loops.CP == cp,:);
 
 mu_actual = real_loops.mu(real_loops.CP == cp);
