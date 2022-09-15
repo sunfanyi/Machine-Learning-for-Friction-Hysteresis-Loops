@@ -94,6 +94,6 @@ slip = single(mu ~= 0);
 test_data = table(ktL, ktR, kt, mu, slip, N, X, A_norm, A_worn, x, Ffr, ...
             'VariableNames', ...
             {'ktL','ktR','kt','mu','slip','N','X','A_norm','A_worn','x','Ffr'});
-test_data(isnan(test_data.kt),:) = [];
+% test_data(isnan(test_data.kt),:) = [];
 
 end

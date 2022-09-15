@@ -1,4 +1,4 @@
-function [mu_filtered, kt_filtered] = filter_data(data, display)
+function [mu_filtered, kt_filtered, t_filtered] = filter_data(data, display)
 t = data(:,1);
 mu = data(:,2);
 kt = data(:,3);
@@ -14,6 +14,11 @@ b = (1/windowSize)*ones(1,windowSize);
 a = 1;
 mu_filtered = filter(b, a, mu_hampeled);
 kt_filtered = filter(b, a, kt_hampeled);
+
+nan_idx = isnan(mu_filtered) | isnan(kt_filtered);
+mu_filtered(nan_idx) = [];
+kt_filtered(nan_idx) = [];
+t_filtered = t(~nan_idx);
 
 if display
 figure();
@@ -44,12 +49,12 @@ subplot(2,1,2);
     
 figure();
 subplot(2,1,1);
-    plot(t, mu_filtered, '-o','MarkerSize',3);
+    plot(t_filtered, mu_filtered, '-o','MarkerSize',3);
     xlabel('time(s)');
     ylabel('mu\_filtered');
     
 subplot(2,1,2);
-    plot(t, kt_filtered, '-o','MarkerSize',3);
+    plot(t_filtered, kt_filtered, '-o','MarkerSize',3);
     xlabel('time(s)');
     ylabel('kt\_filtered');
 end

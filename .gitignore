@@ -1,5 +1,5 @@
 *.asv
-*.xlsx
+
 
 *.mat
 !/create_numerical_loops/noise_info_slip.mat
