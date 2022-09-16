@@ -3,10 +3,11 @@ clear variables;
 
 load evoluation_mu_kt.mat
 
-cp = 34;
+cp = 2;
 data = eval(sprintf('cp%d',cp));
 display = true;
 [mu_filtered, kt_filtered, t] = filter_data(data, display);
+
 
 subplot(2,1,1);
 t_ss = 1300;  % time when mu reaches the steady state

@@ -1,5 +1,3 @@
-
-
 % *************************************************************
 % The method to extract the frquency content of noise in this file is
 % wrong, see analyse_noise.m for correct method

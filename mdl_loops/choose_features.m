@@ -1,5 +1,20 @@
 function [loops_train, loops_test, Xtrain, ytrain, Xtest, ytest] = ...
     choose_features(loops, response, pct_training, random)
+%CHOOSE_FEATURES generates matrices for training ML models.
+%   choose_features(loops, response, pct_training, random) returns the
+%   training and test set for machine learning models. X is a m*n matrix
+%   where m is the number of training examples and y is a m vector
+%   containing the value of response.=
+%
+%   loops is a table contains all the loops information
+%
+%   response specifies the response of the ML model, which determines the
+%   features to be extracted
+%
+%   pct_training is the percentae of training examples
+%
+%   random is a logical flag specifying if the order is reshuffled
+
 
 % set default values
 if ~exist('random', 'var') || isempty(random)

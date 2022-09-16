@@ -1,11 +1,11 @@
 function [error_loops] = evaluate_mdl_classification(mdl, ...
                                         Xtest, ytest, loops_test)
 
-% if ~mdl.ConvergenceInfo.Converged
-%     fprintf('not convergent\n');
-% else
-%     fprintf('convergent\n');
-% end
+if ~mdl.ConvergenceInfo.Converged
+    fprintf('not convergent\n');
+else
+    fprintf('convergent\n');
+end
 
 y_pred = predict(mdl, Xtest);
 fprintf('Accuracy : %0.2f%% | Failures: %d over %d\n\n', ...

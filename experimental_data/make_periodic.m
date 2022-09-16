@@ -1,6 +1,6 @@
 function [F] = make_periodic(F_raw)
 %MAKE_PERIODIC makes the raw signal periodic.
-%   ake_periodic(F_raw) returns a periodic signal with the value of first
+%   make_periodic(F_raw) returns a periodic signal with the value of first
 %   point euivalent to the value of the last point. This solves the problem
 %   of discontinuity and makes the signal continous after concatted, and
 %   thereby preventing the spectral leakage problem during FFT.

@@ -67,3 +67,5 @@ fprintf('Accuracy on numerical loops:\n');
 error_loops_numerical = evaluate_mdl_classification(mdl_classification, ...
                     X_numerical, y_numerical, numerical_loops);
 sgtitle('misclassification in numerical loops');
+
+cd ..\mdl_loops

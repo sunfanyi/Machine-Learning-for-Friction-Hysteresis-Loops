@@ -27,6 +27,11 @@ function [numerical_loops] = create_loops(fex, N_cycles, cycle_points, ...
 %                         returned values can be used to obtain
 %                         hysteresis loops that are close to the real
 %                         experimentl condition.
+%      'uniform'          The values are from a uniform distribution. The
+%                         values are from a range with constant
+%                         probabilities. 
+%      'more_stick'       The values are half-random but they are generated
+%                         in a way with more loops in stick regime.
 
 % set default values
 if ~exist('f', 'var') || isempty(fex)

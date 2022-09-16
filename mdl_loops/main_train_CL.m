@@ -41,7 +41,7 @@ cd ..
 normalise = false;
 idx = randperm(size(loops_slip,1), 16);
 plot_loops_individual(loops_slip(idx,:), normalise);
-cd model_1
+cd mdl_loops
 
 %% choose features
 pct_train = 0.8;
@@ -63,5 +63,3 @@ fprintf('\n========== CL ==========\n');
 fprintf('Training error: %0.2f%%\n', ...
             mean(abs((predict(mdl_CL, Xtrain)-ytrain)./ytrain))*100);
 [y_pred, error] = evaluate_mdl_reg(mdl_CL, Xtest, ytest);
-
-%% Evaluate model performance with experimental data

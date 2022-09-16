@@ -1,5 +1,5 @@
 function [Ffr_with_noise] = add_noise_fft(Ffr, parameters, slip)
-%ADD_NOISE_FFT adds noise to numerical hysteresis loops.
+% ADD_NOISE_FFT adds noise to numerical hysteresis loops.
 %   add_noise_fft(Ffr, slip, cycle_points) returns friction force signal
 %   after noise contents are added. The noise contents in frequency domain
 %   are obtained from the experimental data after FFT. They include noise
@@ -9,15 +9,15 @@ function [Ffr_with_noise] = add_noise_fft(Ffr, parameters, slip)
 %   loops (mu, N, kt & X), and search within all noise data for the one
 %   with the closest parameters by finding the Euclidean distance. This is
 %   to simulate the real test conditions.
-%
+% 
 %   Ffr is the original force signal, noise will be added to Ffr
-%
+% 
 %   paramters is a m*4 matrix where m is the number of loops. It usually
 %   contains mu, N, kt & X.
-%
+% 
 %   slip is a logical variable which specifies whether the gross slip
 %   regime is reached.
-%
+% 
 
 load noise_info_slip.mat noise_info_slip;
 load noise_info_stick.mat noise_info_stick;

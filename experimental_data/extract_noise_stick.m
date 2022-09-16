@@ -1,3 +1,17 @@
+% Noise are extracted in the following procedures:
+%     - Classify experimental loops as gross slip and stick regime.
+%     - For each loop, remove the noise manually by using the CL, kt, mu
+%       values to numerically construct the loop (force response) without
+%       noise.   
+%     - Use FFT to analyse the frequency contents of force responses before
+%       and after noise is removed (repeat the signal 10 times for a higher
+%       frequency resolution).  
+%     - Noise content = frequency of force signal with noise – frequency of
+%       force signal without noise 
+%     - Delete the original frequency (100 Hz).
+%     - Delete all negative frequency contents for the noise.
+%     - For each type of loops, extract their noise and store them separately.
+
 clear variables;
 close all;
 

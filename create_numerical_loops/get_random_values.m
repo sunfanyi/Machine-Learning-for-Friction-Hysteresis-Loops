@@ -13,6 +13,11 @@ function [mu, N, kt, X] = get_random_values(m, random_value_generator)
 %                         returned values can be used to obtain
 %                         hysteresis loops that are close to the real
 %                         experimentl condition.
+%      'uniform'          The values are from a uniform distribution. The
+%                         values are from a range with constant
+%                         probabilities. 
+%      'more_stick'       The values are half-random but they are generated
+%                         in a way with more loops in stick regime.
 
 if random_value_generator == "gmdistribution"        
     % friction coefficient mu

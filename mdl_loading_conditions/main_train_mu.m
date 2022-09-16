@@ -33,11 +33,3 @@ end
 
 fprintf('Input: Load | Displacement | Nominal area -> Avg test error =  %0.2f%%\n',mean(error_test));
 fprintf('Input: Load | Displacement | Nominal area -> Avg train error =  %0.2f%%\n\n',mean(error_train));
-
-% y_pred = predict(mdl, Xtrain);
-% error = (y_pred-ytest)./ytest;
-% 
-% [max_error, idx] = max(abs(error));
-% error_msg = sprintf('train error: %0.2f%%, highest error: %0.2f%% at %0.0f%th', ...
-%             100*mean(abs(error)), 100*max_error, idx);
-% disp(error_msg);
